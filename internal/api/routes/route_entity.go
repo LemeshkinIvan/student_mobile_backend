@@ -1,18 +1,23 @@
 package routes
 
 import (
-	"app/internal/api/controllers"
+	user_ctrl "app/internal/api/controllers/auth"
+	documents_ctrl "app/internal/api/controllers/documents"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 )
 
 type RouteEntity struct {
-	Engine         *gin.Engine
-	AuthController *controllers.AuthController
+	Engine              *gin.Engine
+	AuthController      *user_ctrl.AuthController
+	DocumentsController *documents_ctrl.DocumentsController
 }
 
-func NewRouteEntity(authController *controllers.AuthController) *RouteEntity {
+func NewRouteEntity(
+	authController *user_ctrl.AuthController,
+	documentsController *documents_ctrl.DocumentsController,
+) *RouteEntity {
 	engine := gin.Default()
 
 	engine.Use(cors.New(cors.Config{
@@ -30,4 +35,5 @@ func NewRouteEntity(authController *controllers.AuthController) *RouteEntity {
 
 func (re *RouteEntity) RegisterAllRoutes() {
 	re.RegisterAuthRoutes()
+	re.RegisterDocumentsRoutes()
 }

@@ -1,9 +1,10 @@
-package controllers
+package auth_controllers
 
 import (
-	user_repository "app/internal/data/repository"
-	auth_models "app/internal/domain/models/auth"
-	"app/internal/services"
+	error_resp "app/internal/api/controllers/common_ctrl"
+	user_repository "app/internal/data/repository/user"
+	models "app/internal/domain/models/auth"
+	services "app/internal/services/user_service"
 	"log"
 	"net/http"
 
@@ -26,13 +27,13 @@ func NewAuthController(
 }
 
 func (ctrl *AuthController) GetUsers(c *gin.Context) {
-	var request auth_models.UserRequest
+	var request models.UserRequest
 
 	if err := c.BindJSON(&request); err != nil {
 		var alert string = "bad client getUser request " + err.Error()
 		log.Panic(alert)
 
-		c.JSON(http.StatusBadRequest, ErrorRessponse{
+		c.JSON(http.StatusBadRequest, error_resp.ErrorRessponse{
 			Message: err.Error(),
 		})
 	}
@@ -43,16 +44,24 @@ func (ctrl *AuthController) GetUsers(c *gin.Context) {
 }
 
 func (ctrl *AuthController) GetTokens(c *gin.Context) {
-	var tokenRequest auth_models.TokensPairRequest
+	var tokenRequest models.TokensPairRequest
 
 	if err := c.BindJSON(&tokenRequest); err != nil {
 		var alert string = "bad client token request " + err.Error()
 		log.Panic(alert)
 
-		c.JSON(http.StatusBadRequest, ErrorRessponse{
-			Message: err.Error(),
+		c.JSON(http.StatusBadRequest, error_resp.ErrorRessponse{
+			Message: "byg",
 		})
 
+		return
+	}
+
+	if tokenRequest.Code != "12" {
+		var alert string = "user not exist"
+		c.JSON(http.StatusBadRequest, error_resp.ErrorRessponse{
+			Message: alert,
+		})
 		return
 	}
 
@@ -70,5 +79,28 @@ func (ctrl *AuthController) GetTokens(c *gin.Context) {
 }
 
 func (ctrl *AuthController) RefreshToken(c *gin.Context) {
+	var tokenRefresh models.TokensRefreshRequest
 
+	if err := c.BindJSON(&tokenRefresh); err != nil {
+		var alert string = "bad client token request " + err.Error()
+		log.Panic(alert)
+
+		c.JSON(http.StatusBadRequest, error_resp.ErrorRessponse{
+			Message: "byg",
+		})
+
+		return
+	}
+
+	var pair, err = ctrl.Repository.GetTokenPair(tokenRefresh.AccessToken)
+
+	if err != nil {
+		var alert string = "cant generate tokens " + err.Error()
+		log.Panic(alert)
+
+		c.JSON(http.StatusInternalServerError, "tokens")
+		return
+	}
+
+	c.IndentedJSON(http.StatusOK, pair)
 }

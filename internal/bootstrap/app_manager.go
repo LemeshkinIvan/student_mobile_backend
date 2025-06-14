@@ -1,10 +1,13 @@
 package bootstrap
 
 import (
-	"app/internal/api/controllers"
+	auth_ctrl "app/internal/api/controllers/auth"
+	doc_ctrl "app/internal/api/controllers/documents"
 	"app/internal/api/routes"
-	user_repository "app/internal/data/repository"
-	"app/internal/services"
+	documents_repository "app/internal/data/repository/documents"
+	user_repository "app/internal/data/repository/user"
+	doc_serv "app/internal/services/document_service"
+	user_serv "app/internal/services/user_service"
 )
 
 type App struct {
@@ -14,13 +17,23 @@ type App struct {
 }
 
 func InitApp() *App {
-	userService := services.NewUserService()
+	userService := user_serv.NewUserService()
+	documentsService := doc_serv.NewDocumentsService()
 
-	authController := controllers.NewAuthController(
+	authController := auth_ctrl.NewAuthController(
 		userService, user_repository.NewUserRepository(),
 	)
 
-	router := routes.NewRouteEntity(authController)
+	documentsController := doc_ctrl.NewDocumentsController(
+		documentsService, documents_repository.NewDocumentsRepository(),
+	)
+
+	router := routes.NewRouteEntity(
+		authController,
+		documentsController,
+	)
+
+	router.RegisterAllRoutes()
 
 	database := NewDatabaseManager()
 	env := NewAppEnvironment()
@@ -32,7 +45,8 @@ func InitApp() *App {
 	}
 }
 
+// for local debug
 func (a *App) Run() error {
 	a.Router.RegisterAllRoutes()
-	return a.Router.Engine.Run(":8080")
+	return a.Router.Engine.Run("fck_all")
 }
