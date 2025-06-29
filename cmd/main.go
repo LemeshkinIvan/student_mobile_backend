@@ -11,8 +11,8 @@ func main() {
 	app := bootstrap.InitApp()
 
 	srv := &http.Server{
-		Addr:           "fck_all",
-		Handler:        app.Router.Engine,
+		Addr:           app.Env.BASE_DEBUG_URL,
+		Handler:        app.GinEngine,
 		ReadTimeout:    5 * time.Second,
 		WriteTimeout:   10 * time.Second,
 		IdleTimeout:    30 * time.Second,
