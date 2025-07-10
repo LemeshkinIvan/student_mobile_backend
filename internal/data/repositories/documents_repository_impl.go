@@ -1,11 +1,18 @@
 package repositories
 
-import doc_mod "app/internal/domain/models/documents"
+import (
+	"app/internal/bootstrap/db"
+	doc_mod "app/internal/domain/models/documents"
+)
 
-type DocumentsRepositoryImpl struct{}
+type DocumentsRepositoryImpl struct {
+	db *db.Postgres
+}
 
-func NewDocumentsRepository() *DocumentsRepositoryImpl {
-	return &DocumentsRepositoryImpl{}
+func NewDocumentsRepository(db *db.Postgres) *DocumentsRepositoryImpl {
+	return &DocumentsRepositoryImpl{
+		db: db,
+	}
 }
 
 func (ur *DocumentsRepositoryImpl) GetDocumentByUid(token string) doc_mod.DocumentResponse {

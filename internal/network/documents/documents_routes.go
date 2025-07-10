@@ -1,11 +1,11 @@
 package doc_api
 
-func (api *DocumentsApi) RegisterDocumentsRoutes() {
-	documentsRoutes := api.Engine.Group("/documents")
+func (api *DocumentsApi) RegRoutes() {
+	documentsRoutes := api.engine.Group("/documents")
 
 	{
-		documentsRoutes.POST("/byUid", api.Controller.GetAllDocuments)
-		documentsRoutes.POST("/all", api.Controller.GetDocumentByUid)
-		documentsRoutes.POST("/user/byUid", api.Controller.GetUserDocuments)
+		documentsRoutes.POST("/byUid", api.controller.GetAllDocuments)
+		documentsRoutes.POST("/all", api.controller.GetDocumentByUid)
+		documentsRoutes.POST("/user/byUid", api.controller.GetUserDocuments)
 	}
 }

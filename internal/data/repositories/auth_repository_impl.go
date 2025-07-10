@@ -1,15 +1,19 @@
 package repositories
 
 import (
+	"app/internal/bootstrap/db"
 	auth_models "app/internal/domain/models/auth"
 	"errors"
 )
 
 type AuthRepositoryImpl struct {
+	db *db.Postgres
 }
 
-func NewAuthRepository() *AuthRepositoryImpl {
-	return &AuthRepositoryImpl{}
+func NewAuthRepository(db *db.Postgres) *AuthRepositoryImpl {
+	return &AuthRepositoryImpl{
+		db: db,
+	}
 }
 
 func (ur *AuthRepositoryImpl) GetUserByAccessToken(token string) auth_models.UserResponse {

@@ -11,11 +11,11 @@ func main() {
 	app := bootstrap.InitApp()
 
 	srv := &http.Server{
-		Addr:           app.Env.BASE_DEBUG_URL,
-		Handler:        app.GinEngine,
-		ReadTimeout:    5 * time.Second,
-		WriteTimeout:   10 * time.Second,
-		IdleTimeout:    30 * time.Second,
+		Addr:           app.Config.BASE_DEV_URL,
+		Handler:        app.Engine,
+		ReadTimeout:    app.Config.READ_TIMEOUT * time.Second,
+		WriteTimeout:   app.Config.WRITE_TIMEOUT * time.Second,
+		IdleTimeout:    app.Config.IDLE_TIMEOUT * time.Second,
 		MaxHeaderBytes: 1 << 20, // 1 MB
 	}
 

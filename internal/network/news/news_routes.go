@@ -1,9 +1,9 @@
 package news_api
 
-func (api *NewsApi) RegisterNewsRoutes() {
-	routes := api.Engine.Group("/schedule")
+func (api *NewsApi) RegRoutes() {
+	routes := api.engine.Group("/schedule")
 
 	{
-		routes.GET("/2", api.Controller.GetNews)
+		routes.GET("/2", api.controller.GetNews)
 	}
 }

@@ -1,15 +1,32 @@
 package news_api
 
-import "github.com/gin-gonic/gin"
+import (
+	"app/internal/bootstrap/db"
+	l "app/internal/common/logger"
+	"app/internal/data/repositories"
+
+	"github.com/gin-gonic/gin"
+)
 
 type NewsApi struct {
-	Engine     *gin.Engine
-	Controller *NewsController
-	// log Slog
+	engine     *gin.Engine
+	controller *NewsController
+	repo       *repositories.NewsRepositoryImpl
 }
 
-func NewNewsApi(e *gin.Engine, c *NewsController) *NewsApi {
-	api := &NewsApi{Engine: e, Controller: c}
-	api.RegisterNewsRoutes()
-	return &NewsApi{}
+func NewNewsApi(e *gin.Engine, db *db.Postgres) *NewsApi {
+	r := repositories.NewNewsRepository(db)
+	l.Logg.Info("news repository was init")
+
+	ctrl := NewNewsController(r)
+	l.Logg.Info("news contoller was init")
+
+	api := &NewsApi{
+		engine:     e,
+		controller: ctrl,
+		repo:       r,
+	}
+
+	api.RegRoutes()
+	return api
 }
